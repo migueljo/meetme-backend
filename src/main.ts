@@ -1,14 +1,30 @@
+import express from 'express';
+import { createServer } from 'http';
 import { Server } from 'socket.io';
+import type * as SocketIOTypes from 'socket.io';
 
-const io = new Server({});
+const PORT = 8080;
+const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, {});
+
+httpServer.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`);
+});
+
+const socketPool = new Map<string, SocketIOTypes.Socket>();
 
 // Fired when a new connection is made
 io.on('connection', (socket) => {
-  console.log('New connection:', socket);
+  const { token } = socket.handshake.auth;
+
+  socketPool.set(token, socket);
+  console.log('Connection token:', token);
 
   // Fired when the connection is closed
   socket.on('disconnect', (reason) => {
     console.log('Disconnected reason:', reason);
+    socketPool.delete(token);
   });
 
   socket.on('video-offer', (data: VideoOfferData) => {
@@ -22,12 +38,14 @@ io.on('connection', (socket) => {
   });
 
   socket.on('new-ice-candidate', (data: IceCandidateData) => {
-    console.log('new-ice-candidate', data);
+    console.log('new-ice-candidate:', data);
     // Send the ice candidate to the target
   });
 });
 
-io.listen(3000);
+process.on('uncaughtException', (err, origin) => {
+  console.log(origin, err);
+});
 
 type VideoOfferData = {
   type: 'video-offer';
