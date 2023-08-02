@@ -27,13 +27,13 @@ io.on('connection', (socket) => {
     socketPool.delete(token);
   });
 
-  socket.on('video-offer', (data: VideoOfferData) => {
-    console.log('video-offer', data);
+  socket.on('offer', (data: VideoOfferData) => {
+    console.log('offer', data);
     // Send the offer to the target
   });
 
-  socket.on('video-answer', (data: VideoAnswerData) => {
-    console.log('video-answer', data);
+  socket.on('answer', (data: VideoAnswerData) => {
+    console.log('answer', data);
     // Send the answer to the target
   });
 
@@ -48,14 +48,14 @@ process.on('uncaughtException', (err, origin) => {
 });
 
 type VideoOfferData = {
-  type: 'video-offer';
+  type: 'offer';
   name: string; // Sender's name
   target: string; // // Person receiving the description
   sdp: string; // Description to send
 };
 
 type VideoAnswerData = {
-  type: 'video-answer';
+  type: 'answer';
   name: string; // Sender's name
   target: string; // // Person receiving the description
   sdp: string; // Description to send
