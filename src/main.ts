@@ -28,18 +28,33 @@ io.on('connection', (socket) => {
   });
 
   socket.on('offer', (data: VideoOfferData) => {
-    console.log('offer', data);
-    // Send the offer to the target
+    const targetSocket = socketPool.get(data.target);
+    if (targetSocket) {
+      console.log('Socket: Sending offer to', data.target);
+      targetSocket.emit('offer', data);
+    } else {
+      console.log('Socket: No target found for', data.target);
+    }
   });
 
   socket.on('answer', (data: VideoAnswerData) => {
-    console.log('answer', data);
-    // Send the answer to the target
+    const targetSocket = socketPool.get(data.target);
+    if (targetSocket) {
+      console.log('Socket: Sending answer to', data.target);
+      targetSocket.emit('answer', data);
+    } else {
+      console.log('Socket: No target found for', data.target);
+    }
   });
 
   socket.on('new-ice-candidate', (data: IceCandidateData) => {
-    console.log('new-ice-candidate:', data);
-    // Send the ice candidate to the target
+    const targetSocket = socketPool.get(data.target);
+    if (targetSocket) {
+      console.log('Socket: Sending new-ice-candidate to', data.target);
+      targetSocket.emit('new-ice-candidate', data);
+    } else {
+      console.log('Socket: No target found for', data.target);
+    }
   });
 });
 
