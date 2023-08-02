@@ -27,31 +27,48 @@ io.on('connection', (socket) => {
     socketPool.delete(token);
   });
 
-  socket.on('offer', (data: VideoOfferData) => {
+  socket.on(EventTypes.offer, (data: VideoOfferData) => {
     const targetSocket = socketPool.get(data.target);
     if (targetSocket) {
-      console.log('Socket: Sending offer to', data.target);
-      targetSocket.emit('offer', data);
+      console.log(`Socket: Sending "${EventTypes.offer}" to`, data.target);
+      targetSocket.emit(EventTypes.offer, data);
     } else {
       console.log('Socket: No target found for', data.target);
     }
   });
 
-  socket.on('answer', (data: VideoAnswerData) => {
+  socket.on(EventTypes.answer, (data: VideoAnswerData) => {
     const targetSocket = socketPool.get(data.target);
     if (targetSocket) {
-      console.log('Socket: Sending answer to', data.target);
-      targetSocket.emit('answer', data);
+      console.log(`Socket: Sending "${EventTypes.answer}" to`, data.target);
+      targetSocket.emit(EventTypes.answer, data);
     } else {
       console.log('Socket: No target found for', data.target);
     }
   });
 
-  socket.on('new-ice-candidate', (data: IceCandidateData) => {
+  socket.on(EventTypes.newIceCandidate, (data: IceCandidateData) => {
     const targetSocket = socketPool.get(data.target);
     if (targetSocket) {
-      console.log('Socket: Sending new-ice-candidate to', data.target);
-      targetSocket.emit('new-ice-candidate', data);
+      console.log(
+        `Socket: Sending "${EventTypes.newIceCandidate}" to`,
+        data.target,
+      );
+      targetSocket.emit(EventTypes.newIceCandidate, data);
+    } else {
+      console.log('Socket: No target found for', data.target);
+    }
+  });
+
+  socket.on(EventTypes.rejectCall, (data: RejectCallData) => {
+    console.log(`Socket: "${EventTypes.rejectCall}" message received`, data);
+    const targetSocket = socketPool.get(data.target);
+    if (targetSocket) {
+      console.log(
+        `Socket: Sending "${EventTypes.callRejected}" to`,
+        data.target,
+      );
+      targetSocket.emit(EventTypes.callRejected, data);
     } else {
       console.log('Socket: No target found for', data.target);
     }
@@ -81,3 +98,19 @@ type IceCandidateData = {
   target: string; // Person receiving the description
   candidate: string; // The SDP candidate string
 };
+
+type RejectCallData = {
+  type: 'reject-call';
+  target: string;
+  from: string;
+};
+
+export const EventTypes = {
+  offer: 'offer',
+  answer: 'answer',
+  newIceCandidate: 'new-ice-candidate',
+  rejectCall: 'reject-call',
+  callRejected: 'call-rejected',
+  acceptCall: 'accept-call',
+  callAccepted: 'call-accepted',
+} as const;
