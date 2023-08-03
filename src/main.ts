@@ -33,7 +33,10 @@ io.on('connection', (socket) => {
       console.log(`Socket: Sending "${EventTypes.offer}" to`, data.target);
       targetSocket.emit(EventTypes.offer, data);
     } else {
-      console.log('Socket: No target found for', data.target);
+      console.log(
+        `Socket: Event: "${EventTypes.offer}" No target found for`,
+        data.target,
+      );
     }
   });
 
@@ -43,7 +46,10 @@ io.on('connection', (socket) => {
       console.log(`Socket: Sending "${EventTypes.answer}" to`, data.target);
       targetSocket.emit(EventTypes.answer, data);
     } else {
-      console.log('Socket: No target found for', data.target);
+      console.log(
+        `Socket: Event: "${EventTypes.answer}" No target found for`,
+        data.target,
+      );
     }
   });
 
@@ -56,7 +62,10 @@ io.on('connection', (socket) => {
       );
       targetSocket.emit(EventTypes.newIceCandidate, data);
     } else {
-      console.log('Socket: No target found for', data.target);
+      console.log(
+        `Socket: Event: "${EventTypes.newIceCandidate}" No target found for`,
+        data.target,
+      );
     }
   });
 
@@ -70,7 +79,10 @@ io.on('connection', (socket) => {
       );
       targetSocket.emit(EventTypes.callRejected, data);
     } else {
-      console.log('Socket: No target found for', data.target);
+      console.log(
+        `Socket: Event: "${EventTypes.rejectCall}" No target found for`,
+        data.target,
+      );
     }
   });
 });
